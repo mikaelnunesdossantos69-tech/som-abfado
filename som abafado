@@ -1,0 +1,35 @@
+local SoundService = game:GetService("SoundService")
+
+local function aplicarAjuste(som)
+    if som:IsA("Sound") then
+        -- Mantemos a estrutura que você disse que funcionava
+        if som:FindFirstChild("Configurado") then return end
+        
+        local marcador = Instance.new("BoolValue")
+        marcador.Name = "Configurado"
+        marcador.Parent = som
+
+        -- Ajuste de Volume estável
+        som.Volume = 0.75
+        
+        -- EFEITO: O 2:1 que pedimos (2 partes abafado, 1 parte fino/nitido)
+        local eq = Instance.new("EqualizerSoundEffect")
+        eq.LowGain = 8    -- O peso / abafado
+        eq.MidGain = -12  -- Limpeza (tira o embolado)
+        eq.HighGain = 5   -- O toque fino e nítido
+        eq.Parent = som
+        
+        local comp = Instance.new("CompressorSoundEffect")
+        comp.Threshold = -20
+        comp.Ratio = 4
+        comp.Attack = 0.01
+        comp.Parent = som
+    end
+end
+
+-- Varredura inicial e conexão de eventos (Mantendo o padrão original)
+for _, v in pairs(game:GetDescendants()) do
+    aplicarAjuste(v)
+end
+
+game.DescendantAdded:Connect(aplicarAjuste)
